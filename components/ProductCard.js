@@ -26,6 +26,14 @@ export default function ProductCard({ product }) {
         <div className="absolute top-3 left-3">
           <CountdownBadge endTime={product.end_time} status={product.status} />
         </div>
+        {product.video_url && (
+          <span
+            className="absolute top-3 right-3 bg-ink-900/80 text-paper text-xs font-medium px-2.5 py-1 rounded-full backdrop-blur"
+            title="This lot has a video"
+          >
+            ▶ Video
+          </span>
+        )}
       </div>
 
       <div className="p-5">

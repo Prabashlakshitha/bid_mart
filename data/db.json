@@ -15,6 +15,14 @@
       "password_hash": "$2a$10$4sQCOgJNtdbyjC4cJjnsoeyF87x4W3A7Y1/QQ3yf39lww6eWokc1q",
       "role": "user",
       "created_at": "2026-08-03T08:59:16.780Z"
+    },
+    {
+      "id": 3,
+      "name": "Prabash Lakshitha",
+      "email": "prabashweerasinghe2002@gmail.com",
+      "password_hash": "$2a$10$r0Muzb9NOjL6uamlg70z7uZZhJpiySqT5566tzcKwy3sU9Vl.lAyC",
+      "role": "user",
+      "created_at": "2026-09-07T06:43:49.217Z"
     }
   ],
   "products": [
@@ -65,6 +73,24 @@
       "end_time": "2026-08-06T08:59:16.779Z",
       "status": "ended_unsold",
       "created_at": "2026-08-03T08:59:16.780Z"
+    },
+    {
+      "id": 4,
+      "title": "test",
+      "description": "test123",
+      "image_url": "https://rajopostlhcjswdjumvd.supabase.co/storage/v1/object/public/bidmart-images/lots/1788766858642-f989a4fbd3bebe28.jpg",
+      "video_url": "",
+      "video_path": "",
+      "cost_price": 100,
+      "margin_percent": 20,
+      "min_price": 120,
+      "current_highest_bid": null,
+      "highest_bidder_id": null,
+      "bid_increment": 1,
+      "start_time": "2026-09-07T07:42:51.229Z",
+      "end_time": "2026-09-09T07:42:51.229Z",
+      "status": "active",
+      "created_at": "2026-09-07T07:42:51.229Z"
     }
   ],
   "bids": [
@@ -89,11 +115,25 @@
     }
   ],
   "nextId": {
-    "users": 3,
-    "products": 4,
+    "users": 4,
+    "products": 5,
     "bids": 2,
     "orders": 2,
-    "comments": 6
+    "comments": 8,
+    "requests": 6
   },
-  "comments": []
+  "comments": [],
+  "requests": [
+    {
+      "id": 5,
+      "user_id": 2,
+      "user_name": "Demo Buyer",
+      "title": "test",
+      "note": "123",
+      "image_url": "https://rajopostlhcjswdjumvd.supabase.co/storage/v1/object/public/bidmart-images/requests/1788766665460-124d6a2bf6fba6ff.jpg",
+      "image_path": "requests/1788766665460-124d6a2bf6fba6ff.jpg",
+      "status": "new",
+      "created_at": "2026-09-07T07:37:48.677Z"
+    }
+  ]
 }

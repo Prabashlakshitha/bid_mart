@@ -7,9 +7,11 @@
     "build": "next build",
     "start": "next start",
     "seed": "node scripts/seed.js",
-    "check:supabase": "node scripts/check-supabase.js"
+    "check:supabase": "node scripts/check-supabase.js",
+    "migrate": "node scripts/migrate-to-supabase.js"
   },
   "dependencies": {
+    "@supabase/ssr": "^0.12.6",
     "@supabase/supabase-js": "^2.112.3",
     "bcryptjs": "2.4.3",
     "next": "14.2.35",

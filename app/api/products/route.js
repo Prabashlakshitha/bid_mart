@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { readDb, writeDb, nextId, computeMinPrice, closeExpiredAuctions } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
+import { isUploadedUrl, pathFromUploadedUrl } from "@/lib/uploads";
 
 export async function GET() {
   const db = closeExpiredAuctions();
@@ -17,8 +18,16 @@ export async function POST(request) {
   }
 
   const body = await request.json();
-  const { title, description, image_url, cost_price, margin_percent, bid_increment, duration_hours } =
-    body;
+  const {
+    title,
+    description,
+    image_url,
+    video_url,
+    cost_price,
+    margin_percent,
+    bid_increment,
+    duration_hours,
+  } = body;
 
   if (!title || !cost_price || !margin_percent || !duration_hours) {
     return NextResponse.json(
@@ -28,6 +37,14 @@ export async function POST(request) {
   }
   if (Number(cost_price) <= 0 || Number(margin_percent) < 0) {
     return NextResponse.json({ error: "Cost price must be positive and margin cannot be negative." }, { status: 400 });
+  }
+  // The image may be any URL (admins can still paste a link), but a video is
+  // only ever something we uploaded — there's no paste-a-link path for it.
+  if (video_url && !isUploadedUrl(video_url)) {
+    return NextResponse.json(
+      { error: "That video wasn't uploaded through this site." },
+      { status: 400 }
+    );
   }
 
   const db = readDb();
@@ -40,6 +57,8 @@ export async function POST(request) {
     title,
     description: description || "",
     image_url: image_url || "",
+    video_url: video_url || "",
+    video_path: video_url ? pathFromUploadedUrl(video_url) : "",
     cost_price: Number(cost_price),
     margin_percent: Number(margin_percent),
     min_price,

@@ -5,11 +5,15 @@ bids, orders and comments still live in `data/db.json`. That means you get real
 file uploads without migrating the database — see "Later: moving the database
 too" at the bottom.
 
-Two things use it:
+Four things use it:
 
 - **Admin → Add a lot** — upload a product photo instead of pasting a URL.
+- **Admin → Add a lot** — upload a short video of the lot (MP4/WebM/MOV, up to
+  50 MB), shown as a player on the product page.
 - **Product page → Buyer photos & comments** — a logged-in buyer can post their
   own description of an item, optionally with their own photo.
+- **Request an item** (`/request`) — a customer sends the admin a photo and note
+  describing goods they'd like sourced.
 
 Until you finish the steps below, both still work: the lot form falls back to
 pasting an image URL, and the comment form accepts text without a photo. Nothing
@@ -38,10 +42,16 @@ defence. **SQL Editor** → paste and run:
 
 ```sql
 update storage.buckets
-set file_size_limit  = 5242880,   -- 5 MB, matches lib/rules.js
-    allowed_mime_types = array['image/jpeg', 'image/png', 'image/gif', 'image/webp']
+set file_size_limit  = 52428800,  -- 50 MB, the video limit in lib/rules.js
+    allowed_mime_types = array[
+      'image/jpeg', 'image/png', 'image/gif', 'image/webp',
+      'video/mp4', 'video/webm', 'video/quicktime'
+    ]
 where id = 'bidmart-images';
 ```
+
+The bucket limit has to be the *larger* of the two (videos), because it applies
+to every upload. Images are still held to 5 MB by the app itself.
 
 You do **not** need to write any row-level-security policies. Uploads go through
 this app's own API routes using the service role key, so the only rule that
@@ -122,6 +132,8 @@ browser  ──file──>  POST /api/uploads  ──>  Supabase Storage
 | [app/api/uploads/route.js](app/api/uploads/route.js) | The only upload entry point; maps `kind` to a folder and checks permissions |
 | [app/api/products/[id]/comments/route.js](app/api/products/[id]/comments/route.js) | List and post buyer comments |
 | [app/api/comments/[id]/route.js](app/api/comments/[id]/route.js) | Delete a comment (author or admin) |
+| [app/api/requests/route.js](app/api/requests/route.js) | Send an item request; list them (admins see all, customers see their own) |
+| [app/api/requests/[id]/route.js](app/api/requests/[id]/route.js) | Change a request's status (admin) or delete it |
 | [components/ImageUploadField.js](components/ImageUploadField.js) | The file picker + preview, used by both forms |
 | [components/ProductComments.js](components/ProductComments.js) | The buyer photos & comments section |
 

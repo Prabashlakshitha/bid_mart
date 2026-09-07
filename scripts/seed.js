@@ -108,7 +108,8 @@ async function seed() {
         created_at: new Date(now - 30 * 60 * 1000).toISOString(),
       },
     ],
-    nextId: { users: 3, products: 4, bids: 1, orders: 1, comments: 2 },
+    requests: [],
+    nextId: { users: 3, products: 4, bids: 1, orders: 1, comments: 2, requests: 1 },
   };
 
   fs.writeFileSync(DB_PATH, JSON.stringify(db, null, 2));

@@ -13,9 +13,21 @@ with a note, ready for PayHere to be wired in next.
 - **Real image uploads** — admins upload a lot photo from their machine
   (Supabase Storage). Falls back to pasting an image URL if Supabase isn't
   configured, so the site runs with zero setup
+- **Lot videos** — admins can also attach a short video (MP4/WebM/MOV, up to
+  50 MB). It plays under the photo on the product page, and lots with one get a
+  "▶ Video" badge on the home grid
+- **Admin → Users** — every registered account, with their bid/order/request
+  counts. Signups are written to `data/db.json` by `/api/auth/register`; this
+  is where you see them
 - **Buyer photos & comments** — a logged-in buyer can post their own
   description of an item plus their own photo of it; authors and admins can
   delete a comment
+- **Customer item requests** (`/request`) — a customer describes goods they
+  want sourced and attaches a photo of the kind of thing they mean. It goes
+  straight to **Admin → Requests**, where the admin sees the photo, the note
+  and the requester's email, and moves each one through
+  new → reviewed → closed. Requests are private: a customer only ever sees
+  their own.
 - **Auth** — register/login for buyers, a seeded admin account
 - **Orders page** — shows won auctions "awaiting payment" once an auction ends
 - **Auto-close logic** — when an auction's timer expires, the highest bidder

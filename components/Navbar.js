@@ -15,6 +15,10 @@ export default function Navbar({ user }) {
             Auctions
           </Link>
 
+          <Link href="/request" className="hover:text-gold-dark transition-colors focus-ring rounded">
+            Request an item
+          </Link>
+
           {user?.role === "admin" && (
             <Link href="/admin" className="hover:text-gold-dark transition-colors focus-ring rounded">
               Admin

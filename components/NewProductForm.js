@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import ImageUploadField from "./ImageUploadField";
+import MediaUploadField from "./MediaUploadField";
 
 export default function NewProductForm({ storageEnabled = false }) {
   const router = useRouter();
@@ -13,6 +13,7 @@ export default function NewProductForm({ storageEnabled = false }) {
     title: "",
     description: "",
     image_url: "",
+    video_url: "",
     cost_price: "",
     margin_percent: "20",
     bid_increment: "",
@@ -79,7 +80,7 @@ export default function NewProductForm({ storageEnabled = false }) {
 
       <div>
         {imageMode === "upload" ? (
-          <ImageUploadField
+          <MediaUploadField
             kind="lot"
             label="Product photo"
             value={form.image_url}
@@ -112,6 +113,17 @@ export default function NewProductForm({ storageEnabled = false }) {
           </button>
         )}
       </div>
+
+      {storageEnabled && (
+        <MediaUploadField
+          kind="lot_video"
+          media="video"
+          label="Short video of the lot (optional)"
+          hint="A few seconds showing the item from several angles. MP4, WebM or MOV."
+          value={form.video_url}
+          onChange={(url) => setForm((f) => ({ ...f, video_url: url }))}
+        />
+      )}
 
       <div className="grid grid-cols-2 gap-4">
         <div>

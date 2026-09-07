@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import ImageUploadField from "./ImageUploadField";
+import MediaUploadField from "./MediaUploadField";
 import { MAX_COMMENT_LENGTH } from "@/lib/rules";
 
 /**
@@ -100,7 +100,7 @@ export default function ProductComments({
           </div>
 
           {storageEnabled ? (
-            <ImageUploadField
+            <MediaUploadField
               kind="comment"
               label="Add a photo (optional)"
               value={imageUrl}

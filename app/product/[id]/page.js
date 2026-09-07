@@ -1,6 +1,6 @@
 import { closeExpiredAuctions } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
-import { isStorageConfigured } from "@/lib/supabase";
+import { isStorageConfigured } from "@/lib/supabase/admin";
 import CountdownBadge from "@/components/CountdownBadge";
 import BidForm from "@/components/BidForm";
 import ProductComments from "@/components/ProductComments";
@@ -37,6 +37,22 @@ export default function ProductPage({ params }) {
               <div className="w-full h-full flex items-center justify-center text-slate">No image</div>
             )}
           </div>
+
+          {product.video_url && (
+            <div className="mt-4">
+              <h2 className="text-xs uppercase tracking-wide text-slate mb-2">Video</h2>
+              <video
+                src={product.video_url}
+                controls
+                preload="metadata"
+                playsInline
+                className="w-full rounded-card bg-ink-900"
+              >
+                Your browser can&apos;t play this video.{" "}
+                <a href={product.video_url}>Download it instead.</a>
+              </video>
+            </div>
+          )}
         </div>
 
         <div>

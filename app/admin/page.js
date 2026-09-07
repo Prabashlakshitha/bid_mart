@@ -12,6 +12,7 @@ export default function AdminPage() {
 
   const db = closeExpiredAuctions();
   const products = [...db.products].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  const newRequests = db.requests.filter((r) => r.status === "new").length;
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-10">
@@ -21,6 +22,23 @@ export default function AdminPage() {
           <p className="text-slate mt-1">Manage lots, pricing, and auction timing.</p>
         </div>
         <div className="flex gap-3">
+          <Link
+            href="/admin/requests"
+            className="border border-ink-800/15 px-4 py-2.5 rounded-card hover:bg-ink-800/5 transition-colors focus-ring flex items-center gap-2"
+          >
+            Requests
+            {newRequests > 0 && (
+              <span className="bg-gold text-ink-800 text-xs font-medium rounded-full px-2 py-0.5">
+                {newRequests}
+              </span>
+            )}
+          </Link>
+          <Link
+            href="/admin/users"
+            className="border border-ink-800/15 px-4 py-2.5 rounded-card hover:bg-ink-800/5 transition-colors focus-ring"
+          >
+            Users
+          </Link>
           <Link
             href="/admin/orders"
             className="border border-ink-800/15 px-4 py-2.5 rounded-card hover:bg-ink-800/5 transition-colors focus-ring"
@@ -36,10 +54,11 @@ export default function AdminPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-4 gap-4 mb-8">
         <StatCard label="Active lots" value={products.filter((p) => p.status === "active").length} />
         <StatCard label="Sold" value={products.filter((p) => p.status === "ended_sold").length} />
         <StatCard label="Unsold" value={products.filter((p) => p.status === "ended_unsold").length} />
+        <StatCard label="Registered users" value={db.users.length} />
       </div>
 
       <div className="border border-ink-800/10 rounded-card overflow-hidden">

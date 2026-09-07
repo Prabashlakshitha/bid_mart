@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { readDb, writeDb, nextId } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
-import { isUploadedImageUrl, pathFromUploadedUrl } from "@/lib/uploads";
+import { isUploadedUrl, pathFromUploadedUrl } from "@/lib/uploads";
 import { MAX_COMMENT_LENGTH } from "@/lib/rules";
 
 /** Public: anyone can read what buyers have said about a lot. */
@@ -45,7 +45,7 @@ export async function POST(request, { params }) {
     );
   }
   // A photo is optional, but if one is attached it must be a file we uploaded.
-  if (image_url && !isUploadedImageUrl(image_url)) {
+  if (image_url && !isUploadedUrl(image_url)) {
     return NextResponse.json(
       { error: "That photo wasn't uploaded through this site." },
       { status: 400 }
