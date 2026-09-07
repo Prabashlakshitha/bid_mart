@@ -1,0 +1,99 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "Admin",
+      "email": "admin@bidmart.test",
+      "password_hash": "$2a$10$CLg81scZZmAj3vp2ZMs9TOi2ySPcib2AllCwF/8ci2DkXaN1gL5gu",
+      "role": "admin",
+      "created_at": "2026-08-03T08:59:16.779Z"
+    },
+    {
+      "id": 2,
+      "name": "Demo Buyer",
+      "email": "buyer@bidmart.test",
+      "password_hash": "$2a$10$4sQCOgJNtdbyjC4cJjnsoeyF87x4W3A7Y1/QQ3yf39lww6eWokc1q",
+      "role": "user",
+      "created_at": "2026-08-03T08:59:16.780Z"
+    }
+  ],
+  "products": [
+    {
+      "id": 1,
+      "title": "Vintage Leica M3 Camera",
+      "description": "Classic 1958 rangefinder camera, fully serviced. Body shows honest brassing, glass is clean with no fungus.",
+      "image_url": "https://images.unsplash.com/photo-1495707902641-75cac588d2e9?w=800&q=80",
+      "cost_price": 45000,
+      "margin_percent": 20,
+      "min_price": 54000,
+      "current_highest_bid": 100000,
+      "highest_bidder_id": 2,
+      "bid_increment": 500,
+      "start_time": "2026-08-03T07:59:16.779Z",
+      "end_time": "2026-08-05T08:59:16.779Z",
+      "status": "ended_sold",
+      "created_at": "2026-08-03T08:59:16.780Z"
+    },
+    {
+      "id": 2,
+      "title": "Handwoven Kandyan Silk Saree",
+      "description": "Traditional handloom silk saree with gold-thread border, made by a heritage weaving cooperative.",
+      "image_url": "https://images.unsplash.com/photo-1610030181087-540f829eb849?w=800&q=80",
+      "cost_price": 18000,
+      "margin_percent": 25,
+      "min_price": 22500,
+      "current_highest_bid": null,
+      "highest_bidder_id": null,
+      "bid_increment": 250,
+      "start_time": "2026-08-03T07:59:16.779Z",
+      "end_time": "2026-08-03T14:59:16.779Z",
+      "status": "ended_unsold",
+      "created_at": "2026-08-03T08:59:16.780Z"
+    },
+    {
+      "id": 3,
+      "title": "Mid-Century Teak Armchair",
+      "description": "Solid teak frame armchair restored with new cushioning. Minor patina consistent with age.",
+      "image_url": "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=800&q=80",
+      "cost_price": 22000,
+      "margin_percent": 18,
+      "min_price": 25960,
+      "current_highest_bid": null,
+      "highest_bidder_id": null,
+      "bid_increment": 300,
+      "start_time": "2026-08-03T07:59:16.779Z",
+      "end_time": "2026-08-06T08:59:16.779Z",
+      "status": "ended_unsold",
+      "created_at": "2026-08-03T08:59:16.780Z"
+    }
+  ],
+  "bids": [
+    {
+      "id": 1,
+      "product_id": 1,
+      "user_id": 2,
+      "bidder_name": "Demo Buyer",
+      "amount": 100000,
+      "created_at": "2026-08-03T09:03:58.194Z"
+    }
+  ],
+  "orders": [
+    {
+      "id": 1,
+      "product_id": 1,
+      "user_id": 2,
+      "final_price": 100000,
+      "payment_status": "awaiting_payment",
+      "order_status": "pending",
+      "created_at": "2026-08-17T16:30:19.371Z"
+    }
+  ],
+  "nextId": {
+    "users": 3,
+    "products": 4,
+    "bids": 2,
+    "orders": 2,
+    "comments": 6
+  },
+  "comments": []
+}
