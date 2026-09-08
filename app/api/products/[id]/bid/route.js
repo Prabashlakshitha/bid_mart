@@ -3,7 +3,7 @@ import { readDb, writeDb, nextId, closeExpiredAuctions } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
 
 export async function POST(request, { params }) {
-  const user = getCurrentUser();
+  const user = await getCurrentUser();
   if (!user) {
     return NextResponse.json({ error: "You must be logged in to bid." }, { status: 401 });
   }
@@ -12,7 +12,8 @@ export async function POST(request, { params }) {
   closeExpiredAuctions();
   const db = readDb();
 
-  const product = db.products.find((p) => p.id === Number(params.id));
+  const { id } = await params;
+  const product = db.products.find((p) => p.id === Number(id));
   if (!product) {
     return NextResponse.json({ error: "Product not found." }, { status: 404 });
   }

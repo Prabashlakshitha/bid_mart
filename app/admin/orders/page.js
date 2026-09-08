@@ -4,8 +4,8 @@ import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
-export default function OrdersPage() {
-  const user = getCurrentUser();
+export default async function OrdersPage() {
+  const user = await getCurrentUser();
   if (!user) redirect("/login");
 
   closeExpiredAuctions();

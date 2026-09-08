@@ -15,7 +15,7 @@ import { MAX_REQUEST_TITLE_LENGTH, MAX_REQUEST_NOTE_LENGTH } from "@/lib/rules";
 
 /** Admins get the whole queue; a customer gets only their own requests. */
 export async function GET() {
-  const user = getCurrentUser();
+  const user = await getCurrentUser();
   if (!user) {
     return NextResponse.json({ error: "You must be logged in." }, { status: 401 });
   }
@@ -29,7 +29,7 @@ export async function GET() {
 }
 
 export async function POST(request) {
-  const user = getCurrentUser();
+  const user = await getCurrentUser();
   if (!user) {
     return NextResponse.json(
       { error: "You must be logged in to send a request." },

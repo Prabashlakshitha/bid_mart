@@ -5,13 +5,14 @@ import { deleteImage } from "@/lib/uploads";
 
 /** A comment can be removed by whoever wrote it, or by an admin moderating. */
 export async function DELETE(_request, { params }) {
-  const user = getCurrentUser();
+  const user = await getCurrentUser();
   if (!user) {
     return NextResponse.json({ error: "You must be logged in." }, { status: 401 });
   }
 
+  const { id } = await params;
   const db = readDb();
-  const index = db.comments.findIndex((c) => c.id === Number(params.id));
+  const index = db.comments.findIndex((c) => c.id === Number(id));
   if (index === -1) {
     return NextResponse.json({ error: "Comment not found." }, { status: 404 });
   }

@@ -115,12 +115,12 @@
     }
   ],
   "nextId": {
-    "users": 4,
-    "products": 5,
-    "bids": 2,
+    "users": 5,
+    "products": 8,
+    "bids": 6,
     "orders": 2,
-    "comments": 8,
-    "requests": 6
+    "comments": 9,
+    "requests": 8
   },
   "comments": [],
   "requests": [

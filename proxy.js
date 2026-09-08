@@ -7,10 +7,12 @@ import { SUPABASE_URL, SUPABASE_ANON_KEY } from "@/lib/supabase/url";
  *
  * Access tokens expire after an hour. Server Components can read cookies but
  * can't write them, so without this the refreshed token would have nowhere to
- * go and users would be silently logged out. Middleware runs before every
- * request and *can* write cookies, so refreshing here is the supported pattern.
+ * go and users would be silently logged out. This runs before every request
+ * and *can* write cookies, so refreshing here is the supported pattern.
+ *
+ * Next 16 renamed this file convention from `middleware` to `proxy`.
  */
-export async function middleware(request) {
+export default async function proxy(request) {
   let response = NextResponse.next({ request });
 
   // No credentials configured yet: get out of the way rather than 500.

@@ -12,8 +12,8 @@ export const dynamic = "force-dynamic";
  * Password hashes are deliberately never sent to the browser — only the
  * counts and contact details an admin needs.
  */
-export default function AdminUsersPage() {
-  const user = getCurrentUser();
+export default async function AdminUsersPage() {
+  const user = await getCurrentUser();
   if (!user || user.role !== "admin") redirect("/login");
 
   const db = readDb();

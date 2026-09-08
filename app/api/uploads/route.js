@@ -18,7 +18,7 @@ const KINDS = {
 };
 
 export async function POST(request) {
-  const user = getCurrentUser();
+  const user = await getCurrentUser();
   if (!user) {
     return NextResponse.json({ error: "You must be logged in to upload." }, { status: 401 });
   }

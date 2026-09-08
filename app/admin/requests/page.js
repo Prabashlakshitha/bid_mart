@@ -6,8 +6,8 @@ import RequestList from "@/components/RequestList";
 
 export const dynamic = "force-dynamic";
 
-export default function AdminRequestsPage() {
-  const user = getCurrentUser();
+export default async function AdminRequestsPage() {
+  const user = await getCurrentUser();
   if (!user || user.role !== "admin") redirect("/login");
 
   const db = readDb();

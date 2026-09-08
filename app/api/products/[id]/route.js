@@ -2,8 +2,9 @@ import { NextResponse } from "next/server";
 import { closeExpiredAuctions } from "@/lib/db";
 
 export async function GET(request, { params }) {
+  const { id } = await params;
   const db = closeExpiredAuctions();
-  const product = db.products.find((p) => p.id === Number(params.id));
+  const product = db.products.find((p) => p.id === Number(id));
   if (!product) {
     return NextResponse.json({ error: "Product not found." }, { status: 404 });
   }

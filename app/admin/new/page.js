@@ -3,8 +3,8 @@ import { redirect } from "next/navigation";
 import NewProductForm from "@/components/NewProductForm";
 import { isStorageConfigured } from "@/lib/supabase/admin";
 
-export default function NewLotPage() {
-  const user = getCurrentUser();
+export default async function NewLotPage() {
+  const user = await getCurrentUser();
   if (!user || user.role !== "admin") redirect("/login");
 
   return (

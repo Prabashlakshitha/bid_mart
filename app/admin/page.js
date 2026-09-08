@@ -6,8 +6,8 @@ import CountdownBadge from "@/components/CountdownBadge";
 
 export const dynamic = "force-dynamic";
 
-export default function AdminPage() {
-  const user = getCurrentUser();
+export default async function AdminPage() {
+  const user = await getCurrentUser();
   if (!user || user.role !== "admin") redirect("/login");
 
   const db = closeExpiredAuctions();

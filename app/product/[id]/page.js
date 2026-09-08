@@ -8,9 +8,12 @@ import { notFound } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
-export default function ProductPage({ params }) {
+export default async function ProductPage({ params }) {
+  // Next 16 hands params over as a promise.
+  const { id } = await params;
+
   const db = closeExpiredAuctions();
-  const product = db.products.find((p) => p.id === Number(params.id));
+  const product = db.products.find((p) => p.id === Number(id));
   if (!product) notFound();
 
   const bids = db.bids
@@ -21,7 +24,7 @@ export default function ProductPage({ params }) {
     .filter((c) => c.product_id === product.id)
     .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
-  const user = getCurrentUser();
+  const user = await getCurrentUser();
   const currentBid = product.current_highest_bid || product.min_price;
   const label = product.current_highest_bid ? "Current bid" : "Starting bid";
 

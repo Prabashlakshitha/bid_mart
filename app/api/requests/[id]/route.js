@@ -6,7 +6,7 @@ import { REQUEST_STATUSES } from "@/lib/rules";
 
 /** Admin moves a request through the queue: new -> reviewed -> closed. */
 export async function PATCH(request, { params }) {
-  const user = getCurrentUser();
+  const user = await getCurrentUser();
   if (!user || user.role !== "admin") {
     return NextResponse.json({ error: "Admin access required." }, { status: 403 });
   }
@@ -16,8 +16,9 @@ export async function PATCH(request, { params }) {
     return NextResponse.json({ error: "Unknown status." }, { status: 400 });
   }
 
+  const { id } = await params;
   const db = readDb();
-  const record = db.requests.find((r) => r.id === Number(params.id));
+  const record = db.requests.find((r) => r.id === Number(id));
   if (!record) {
     return NextResponse.json({ error: "Request not found." }, { status: 404 });
   }
@@ -30,13 +31,14 @@ export async function PATCH(request, { params }) {
 
 /** Either the customer who sent it or an admin can remove a request. */
 export async function DELETE(_request, { params }) {
-  const user = getCurrentUser();
+  const user = await getCurrentUser();
   if (!user) {
     return NextResponse.json({ error: "You must be logged in." }, { status: 401 });
   }
 
+  const { id } = await params;
   const db = readDb();
-  const index = db.requests.findIndex((r) => r.id === Number(params.id));
+  const index = db.requests.findIndex((r) => r.id === Number(id));
   if (index === -1) {
     return NextResponse.json({ error: "Request not found." }, { status: 404 });
   }

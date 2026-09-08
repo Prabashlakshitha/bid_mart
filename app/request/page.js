@@ -6,8 +6,8 @@ import RequestList from "@/components/RequestList";
 
 export const dynamic = "force-dynamic";
 
-export default function RequestPage() {
-  const user = getCurrentUser();
+export default async function RequestPage() {
+  const user = await getCurrentUser();
 
   // Logged-out visitors still see what the page is for, with a prompt to join —
   // more useful than bouncing them straight to the login screen.

@@ -7,8 +7,8 @@ export const metadata = {
   description: "A modern timed-auction marketplace.",
 };
 
-export default function RootLayout({ children }) {
-  const user = getCurrentUser();
+export default async function RootLayout({ children }) {
+  const user = await getCurrentUser();
   return (
     <html lang="en">
       <body className="font-body min-h-screen flex flex-col">

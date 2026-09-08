@@ -7,7 +7,7 @@ import { MAX_COMMENT_LENGTH } from "@/lib/rules";
 /** Public: anyone can read what buyers have said about a lot. */
 export async function GET(_request, { params }) {
   const db = readDb();
-  const productId = Number(params.id);
+  const productId = Number((await params).id);
   const comments = db.comments
     .filter((c) => c.product_id === productId)
     .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
@@ -15,7 +15,7 @@ export async function GET(_request, { params }) {
 }
 
 export async function POST(request, { params }) {
-  const user = getCurrentUser();
+  const user = await getCurrentUser();
   if (!user) {
     return NextResponse.json(
       { error: "You must be logged in to post a comment." },
@@ -23,8 +23,9 @@ export async function POST(request, { params }) {
     );
   }
 
+  const { id } = await params;
   const db = readDb();
-  const product = db.products.find((p) => p.id === Number(params.id));
+  const product = db.products.find((p) => p.id === Number(id));
   if (!product) {
     return NextResponse.json({ error: "Product not found." }, { status: 404 });
   }
