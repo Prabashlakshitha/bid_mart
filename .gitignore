@@ -1,3 +1,8 @@
 node_modules
 .next
 .env*.local
+
+# Cloudflare / OpenNext build output
+.open-next
+.wrangler
+.dev.vars

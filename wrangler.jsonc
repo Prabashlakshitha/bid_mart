@@ -1,0 +1,31 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+
+  // This name MUST match the Worker you deploy to in Cloudflare.
+  //
+  // OpenNext adds a WORKER_SELF_REFERENCE service binding that points the
+  // Worker at itself (it needs that to revalidate its own pages). That binding
+  // is built from the name below, so if this doesn't match the real Worker you
+  // get: "Service binding 'WORKER_SELF_REFERENCE' references Worker 'x' which
+  // was not found".
+  //
+  // Committing this file is what makes the name stable — without it wrangler
+  // guesses a new one on every build.
+  "name": "bid-mart1",
+
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2026-09-07",
+
+  // nodejs_compat is required: Next.js server code uses Node built-ins
+  // (crypto, buffer, stream) that Workers only provide with this flag.
+  "compatibility_flags": ["nodejs_compat"],
+
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+
+  "observability": {
+    "enabled": true
+  }
+}
