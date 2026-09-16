@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { readDb, writeDb } from "@/lib/db";
+import { getRequestById, updateRequestStatus, deleteRequestById } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
 import { deleteImage } from "@/lib/uploads";
 import { REQUEST_STATUSES } from "@/lib/rules";
@@ -17,19 +17,23 @@ export async function PATCH(request, { params }) {
   }
 
   const { id } = await params;
-  const db = readDb();
-  const record = db.requests.find((r) => r.id === Number(id));
+  const record = await updateRequestStatus(Number(id), status);
   if (!record) {
     return NextResponse.json({ error: "Request not found." }, { status: 404 });
   }
 
-  record.status = status;
-  writeDb(db);
-
   return NextResponse.json({ request: record });
 }
 
-/** Either the customer who sent it or an admin can remove a request. */
+/**
+ * Either the customer who sent it or an admin can remove a request.
+ *
+ * Row level security means a non-owner can't even fetch someone else's
+ * request (requests_select scopes reads to "mine or I'm an admin"), so a
+ * stranger's request id 404s here rather than 403ing — it isn't visible to
+ * them at all, which fits the "private request" design better than the old
+ * data/db.json version could enforce.
+ */
 export async function DELETE(_request, { params }) {
   const user = await getCurrentUser();
   if (!user) {
@@ -37,20 +41,15 @@ export async function DELETE(_request, { params }) {
   }
 
   const { id } = await params;
-  const db = readDb();
-  const index = db.requests.findIndex((r) => r.id === Number(id));
-  if (index === -1) {
+  const record = await getRequestById(Number(id));
+  if (!record) {
     return NextResponse.json({ error: "Request not found." }, { status: 404 });
   }
-
-  const record = db.requests[index];
   if (record.user_id !== user.id && user.role !== "admin") {
     return NextResponse.json({ error: "You can only delete your own request." }, { status: 403 });
   }
 
-  db.requests.splice(index, 1);
-  writeDb(db);
-
+  await deleteRequestById(record.id);
   await deleteImage(record.image_path);
 
   return NextResponse.json({ ok: true });

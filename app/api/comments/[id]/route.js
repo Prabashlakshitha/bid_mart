@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { readDb, writeDb } from "@/lib/db";
+import { getCommentById, deleteCommentById } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
 import { deleteImage } from "@/lib/uploads";
 
@@ -11,19 +11,15 @@ export async function DELETE(_request, { params }) {
   }
 
   const { id } = await params;
-  const db = readDb();
-  const index = db.comments.findIndex((c) => c.id === Number(id));
-  if (index === -1) {
+  const comment = await getCommentById(Number(id));
+  if (!comment) {
     return NextResponse.json({ error: "Comment not found." }, { status: 404 });
   }
-
-  const comment = db.comments[index];
   if (comment.user_id !== user.id && user.role !== "admin") {
     return NextResponse.json({ error: "You can only delete your own comment." }, { status: 403 });
   }
 
-  db.comments.splice(index, 1);
-  writeDb(db);
+  await deleteCommentById(comment.id);
 
   // The record is already gone; a failed file delete shouldn't fail the request.
   await deleteImage(comment.image_path);

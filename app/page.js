@@ -1,13 +1,11 @@
-import { closeExpiredAuctions } from "@/lib/db";
+import { closeExpiredAuctions, getProducts } from "@/lib/db";
 import ProductCard from "@/components/ProductCard";
 
 export const dynamic = "force-dynamic";
 
-export default function HomePage() {
-  const db = closeExpiredAuctions();
-  const products = [...db.products].sort(
-    (a, b) => new Date(b.created_at) - new Date(a.created_at)
-  );
+export default async function HomePage() {
+  await closeExpiredAuctions();
+  const products = await getProducts();
   const active = products.filter((p) => p.status === "active");
   const ended = products.filter((p) => p.status !== "active");
 

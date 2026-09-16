@@ -1,4 +1,4 @@
-import { readDb } from "@/lib/db";
+import { getRequests } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
 import { isStorageConfigured } from "@/lib/supabase/admin";
 import RequestForm from "@/components/RequestForm";
@@ -11,11 +11,12 @@ export default async function RequestPage() {
 
   // Logged-out visitors still see what the page is for, with a prompt to join —
   // more useful than bouncing them straight to the login screen.
-  const myRequests = user
-    ? readDb()
-        .requests.filter((r) => r.user_id === user.id)
-        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-    : [];
+  //
+  // Filtered explicitly rather than trusting row level security alone here:
+  // RLS lets an admin session read every request (that's the whole point of
+  // /admin/requests), so an admin visiting this page would otherwise see
+  // everyone's requests instead of just the ones they personally sent.
+  const myRequests = user ? (await getRequests()).filter((r) => r.user_id === user.id) : [];
 
   return (
     <div className="max-w-3xl mx-auto px-6 py-10">

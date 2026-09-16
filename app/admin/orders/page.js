@@ -1,4 +1,4 @@
-import { readDb, closeExpiredAuctions } from "@/lib/db";
+import { closeExpiredAuctions, getOrders } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
 import { redirect } from "next/navigation";
 
@@ -8,18 +8,10 @@ export default async function OrdersPage() {
   const user = await getCurrentUser();
   if (!user) redirect("/login");
 
-  closeExpiredAuctions();
-  const db = readDb();
-
-  // Admins see every order; regular users only see their own.
-  const orders = db.orders
-    .filter((o) => user.role === "admin" || o.user_id === user.id)
-    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-    .map((o) => {
-      const product = db.products.find((p) => p.id === o.product_id);
-      const buyer = db.users.find((u) => u.id === o.user_id);
-      return { ...o, product, buyer };
-    });
+  await closeExpiredAuctions();
+  // Row level security scopes this: an admin session gets every order, any
+  // other session gets only their own (see orders_select in the schema).
+  const orders = await getOrders();
 
   return (
     <div className="max-w-5xl mx-auto px-6 py-10">
@@ -47,7 +39,7 @@ export default async function OrdersPage() {
                 <tr key={o.id}>
                   <td className="px-4 py-3">{o.product?.title || "—"}</td>
                   {user.role === "admin" && <td className="px-4 py-3">{o.buyer?.name || "—"}</td>}
-                  <td className="px-4 py-3 font-mono">Rs. {o.final_price.toLocaleString()}</td>
+                  <td className="px-4 py-3 font-mono">Rs. {Number(o.final_price).toLocaleString()}</td>
                   <td className="px-4 py-3">
                     <span className="bg-signal-warn/10 text-signal-warn text-xs font-medium px-2.5 py-1 rounded-full">
                       {o.payment_status.replace("_", " ")}

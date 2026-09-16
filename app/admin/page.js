@@ -1,5 +1,6 @@
-import { closeExpiredAuctions } from "@/lib/db";
+import { closeExpiredAuctions, getProducts, getRequests } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
+import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import CountdownBadge from "@/components/CountdownBadge";
@@ -10,9 +11,14 @@ export default async function AdminPage() {
   const user = await getCurrentUser();
   if (!user || user.role !== "admin") redirect("/login");
 
-  const db = closeExpiredAuctions();
-  const products = [...db.products].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-  const newRequests = db.requests.filter((r) => r.status === "new").length;
+  await closeExpiredAuctions();
+  const [products, requests] = await Promise.all([getProducts(), getRequests()]);
+  const newRequests = requests.filter((r) => r.status === "new").length;
+
+  const supabase = await createClient();
+  const { count: userCount } = await supabase
+    .from("profiles")
+    .select("*", { count: "exact", head: true });
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-10">
@@ -58,7 +64,7 @@ export default async function AdminPage() {
         <StatCard label="Active lots" value={products.filter((p) => p.status === "active").length} />
         <StatCard label="Sold" value={products.filter((p) => p.status === "ended_sold").length} />
         <StatCard label="Unsold" value={products.filter((p) => p.status === "ended_unsold").length} />
-        <StatCard label="Registered users" value={db.users.length} />
+        <StatCard label="Registered users" value={userCount || 0} />
       </div>
 
       <div className="border border-ink-800/10 rounded-card overflow-hidden">
@@ -81,11 +87,11 @@ export default async function AdminPage() {
                     {p.title}
                   </Link>
                 </td>
-                <td className="px-4 py-3 font-mono">Rs. {p.cost_price.toLocaleString()}</td>
+                <td className="px-4 py-3 font-mono">Rs. {Number(p.cost_price).toLocaleString()}</td>
                 <td className="px-4 py-3 font-mono">{p.margin_percent}%</td>
-                <td className="px-4 py-3 font-mono">Rs. {p.min_price.toLocaleString()}</td>
+                <td className="px-4 py-3 font-mono">Rs. {Number(p.min_price).toLocaleString()}</td>
                 <td className="px-4 py-3 font-mono">
-                  {p.current_highest_bid ? `Rs. ${p.current_highest_bid.toLocaleString()}` : "—"}
+                  {p.current_highest_bid ? `Rs. ${Number(p.current_highest_bid).toLocaleString()}` : "—"}
                 </td>
                 <td className="px-4 py-3">
                   <CountdownBadge endTime={p.end_time} status={p.status} />

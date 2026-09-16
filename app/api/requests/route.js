@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { readDb, writeDb, nextId } from "@/lib/db";
+import { getRequests, createRequest } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
 import { isUploadedUrl, pathFromUploadedUrl } from "@/lib/uploads";
 import { MAX_REQUEST_TITLE_LENGTH, MAX_REQUEST_NOTE_LENGTH } from "@/lib/rules";
@@ -10,21 +10,18 @@ import { MAX_REQUEST_TITLE_LENGTH, MAX_REQUEST_NOTE_LENGTH } from "@/lib/rules";
  * A customer describes goods they want us to source, optionally with a photo
  * of the sort of thing they mean. It lands straight in the admin queue at
  * /admin/requests — there's no public listing, since these are private
- * requests between one customer and the shop.
+ * requests between one customer and the shop. Row level security (see
+ * requests_select in supabase/schema.sql) is what actually scopes the list
+ * below to "everything" for an admin and "just mine" for anyone else.
  */
 
-/** Admins get the whole queue; a customer gets only their own requests. */
 export async function GET() {
   const user = await getCurrentUser();
   if (!user) {
     return NextResponse.json({ error: "You must be logged in." }, { status: 401 });
   }
 
-  const db = readDb();
-  const requests = db.requests
-    .filter((r) => user.role === "admin" || r.user_id === user.id)
-    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-
+  const requests = await getRequests();
   return NextResponse.json({ requests });
 }
 
@@ -70,9 +67,7 @@ export async function POST(request) {
     );
   }
 
-  const db = readDb();
-  const record = {
-    id: nextId(db, "requests"),
+  const record = await createRequest({
     user_id: user.id,
     user_name: user.name,
     title: cleanTitle,
@@ -80,11 +75,7 @@ export async function POST(request) {
     image_url: image_url || "",
     image_path: image_url ? pathFromUploadedUrl(image_url) : "",
     status: "new",
-    created_at: new Date().toISOString(),
-  };
-
-  db.requests.push(record);
-  writeDb(db);
+  });
 
   return NextResponse.json({ request: record }, { status: 201 });
 }

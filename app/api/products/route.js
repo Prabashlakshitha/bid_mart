@@ -1,13 +1,11 @@
 import { NextResponse } from "next/server";
-import { readDb, writeDb, nextId, computeMinPrice, closeExpiredAuctions } from "@/lib/db";
+import { getProducts, createProduct, computeMinPrice, closeExpiredAuctions } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
 import { isUploadedUrl, pathFromUploadedUrl } from "@/lib/uploads";
 
 export async function GET() {
-  const db = closeExpiredAuctions();
-  const products = [...db.products].sort(
-    (a, b) => new Date(b.created_at) - new Date(a.created_at)
-  );
+  await closeExpiredAuctions();
+  const products = await getProducts();
   return NextResponse.json({ products });
 }
 
@@ -47,13 +45,11 @@ export async function POST(request) {
     );
   }
 
-  const db = readDb();
   const min_price = computeMinPrice(cost_price, margin_percent);
   const now = new Date();
   const end = new Date(now.getTime() + Number(duration_hours) * 60 * 60 * 1000);
 
-  const product = {
-    id: nextId(db, "products"),
+  const product = await createProduct({
     title,
     description: description || "",
     image_url: image_url || "",
@@ -62,17 +58,12 @@ export async function POST(request) {
     cost_price: Number(cost_price),
     margin_percent: Number(margin_percent),
     min_price,
-    current_highest_bid: null,
-    highest_bidder_id: null,
     bid_increment: Number(bid_increment) || Math.max(1, Math.round(min_price * 0.01)),
     start_time: now.toISOString(),
     end_time: end.toISOString(),
     status: "active",
     created_at: now.toISOString(),
-  };
-
-  db.products.push(product);
-  writeDb(db);
+  });
 
   return NextResponse.json({ product }, { status: 201 });
 }

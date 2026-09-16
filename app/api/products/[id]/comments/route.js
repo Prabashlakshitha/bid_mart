@@ -1,16 +1,13 @@
 import { NextResponse } from "next/server";
-import { readDb, writeDb, nextId } from "@/lib/db";
+import { getCommentsForProduct, createComment, getProductById } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
 import { isUploadedUrl, pathFromUploadedUrl } from "@/lib/uploads";
 import { MAX_COMMENT_LENGTH } from "@/lib/rules";
 
 /** Public: anyone can read what buyers have said about a lot. */
 export async function GET(_request, { params }) {
-  const db = readDb();
-  const productId = Number((await params).id);
-  const comments = db.comments
-    .filter((c) => c.product_id === productId)
-    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  const { id } = await params;
+  const comments = await getCommentsForProduct(Number(id));
   return NextResponse.json({ comments });
 }
 
@@ -24,8 +21,7 @@ export async function POST(request, { params }) {
   }
 
   const { id } = await params;
-  const db = readDb();
-  const product = db.products.find((p) => p.id === Number(id));
+  const product = await getProductById(Number(id));
   if (!product) {
     return NextResponse.json({ error: "Product not found." }, { status: 404 });
   }
@@ -53,19 +49,14 @@ export async function POST(request, { params }) {
     );
   }
 
-  const comment = {
-    id: nextId(db, "comments"),
+  const comment = await createComment({
     product_id: product.id,
     user_id: user.id,
     author_name: user.name,
     body: text,
     image_url: image_url || "",
     image_path: image_url ? pathFromUploadedUrl(image_url) : "",
-    created_at: new Date().toISOString(),
-  };
-
-  db.comments.push(comment);
-  writeDb(db);
+  });
 
   return NextResponse.json({ comment }, { status: 201 });
 }

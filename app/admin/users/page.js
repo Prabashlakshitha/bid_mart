@@ -1,34 +1,24 @@
-import { readDb } from "@/lib/db";
+import { getUsersWithStats } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
+import { listUserEmails } from "@/lib/supabase/admin";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
 /**
- * Every registered account. Signups are written to data/db.json by
- * /api/auth/register; this page is how you actually see them.
+ * Every registered account, now in Supabase Auth (see supabase/schema.sql
+ * and scripts/migrate-to-supabase.js) rather than data/db.json.
  *
- * Password hashes are deliberately never sent to the browser — only the
- * counts and contact details an admin needs.
+ * Password hashes are never sent to the browser — Supabase Auth doesn't even
+ * expose them to this server, let alone the client.
  */
 export default async function AdminUsersPage() {
   const user = await getCurrentUser();
   if (!user || user.role !== "admin") redirect("/login");
 
-  const db = readDb();
-  const users = [...db.users]
-    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-    .map((u) => ({
-      id: u.id,
-      name: u.name,
-      email: u.email,
-      role: u.role,
-      created_at: u.created_at,
-      bids: db.bids.filter((b) => b.user_id === u.id).length,
-      orders: db.orders.filter((o) => o.user_id === u.id).length,
-      requests: db.requests.filter((r) => r.user_id === u.id).length,
-    }));
+  const emailByUserId = await listUserEmails();
+  const users = await getUsersWithStats(emailByUserId);
 
   const buyers = users.filter((u) => u.role !== "admin").length;
 

@@ -1,5 +1,6 @@
-import { readDb } from "@/lib/db";
+import { getRequests } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
+import { listUserEmails } from "@/lib/supabase/admin";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import RequestList from "@/components/RequestList";
@@ -10,12 +11,11 @@ export default async function AdminRequestsPage() {
   const user = await getCurrentUser();
   if (!user || user.role !== "admin") redirect("/login");
 
-  const db = readDb();
-  // The requester's email is looked up rather than copied onto the request, so
-  // it stays correct if they ever change it.
-  const requests = db.requests
-    .map((r) => ({ ...r, user_email: db.users.find((u) => u.id === r.user_id)?.email || "" }))
-    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  // Row level security lets an admin session see every request already; the
+  // email itself has to come from the Auth admin API, since PostgREST never
+  // exposes auth.users (email lives there, not in public.profiles).
+  const [rows, emailByUserId] = await Promise.all([getRequests(), listUserEmails()]);
+  const requests = rows.map((r) => ({ ...r, user_email: emailByUserId.get(r.user_id) || "" }));
 
   const counts = {
     new: requests.filter((r) => r.status === "new").length,

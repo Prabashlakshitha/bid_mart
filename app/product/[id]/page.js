@@ -1,4 +1,4 @@
-import { closeExpiredAuctions } from "@/lib/db";
+import { closeExpiredAuctions, getProductById, getBidsForProduct, getCommentsForProduct } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
 import { isStorageConfigured } from "@/lib/supabase/admin";
 import CountdownBadge from "@/components/CountdownBadge";
@@ -12,19 +12,15 @@ export default async function ProductPage({ params }) {
   // Next 16 hands params over as a promise.
   const { id } = await params;
 
-  const db = closeExpiredAuctions();
-  const product = db.products.find((p) => p.id === Number(id));
+  await closeExpiredAuctions();
+  const product = await getProductById(Number(id));
   if (!product) notFound();
 
-  const bids = db.bids
-    .filter((b) => b.product_id === product.id)
-    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-
-  const comments = db.comments
-    .filter((c) => c.product_id === product.id)
-    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-
-  const user = await getCurrentUser();
+  const [bids, comments, user] = await Promise.all([
+    getBidsForProduct(product.id),
+    getCommentsForProduct(product.id),
+    getCurrentUser(),
+  ]);
   const currentBid = product.current_highest_bid || product.min_price;
   const label = product.current_highest_bid ? "Current bid" : "Starting bid";
 

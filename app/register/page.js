@@ -11,6 +11,7 @@ export default function RegisterPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [needsConfirmation, setNeedsConfirmation] = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -27,11 +28,31 @@ export default function RegisterPage() {
         setError(data.error || "Registration failed.");
         return;
       }
+      if (data.needsConfirmation) {
+        // Email confirmation is on for this project — no session yet.
+        setNeedsConfirmation(true);
+        return;
+      }
       router.push("/");
       router.refresh();
     } finally {
       setLoading(false);
     }
+  }
+
+  if (needsConfirmation) {
+    return (
+      <div className="max-w-md mx-auto px-6 py-16">
+        <h1 className="font-display italic text-3xl mb-2">Check your email</h1>
+        <p className="text-slate">
+          We sent a confirmation link to <strong>{email}</strong>. Click it, then{" "}
+          <Link href="/login" className="text-gold-dark hover:underline">
+            log in
+          </Link>
+          .
+        </p>
+      </div>
+    );
   }
 
   return (
