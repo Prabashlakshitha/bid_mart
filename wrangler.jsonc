@@ -27,5 +27,29 @@
 
   "observability": {
     "enabled": true
-  }
+  },
+
+  // OpenNext's worker.js always exports these Durable Object classes, whether
+  // or not the app actually uses them — BidMart doesn't (every route is
+  // force-dynamic, so there's no incremental cache for them to back). Binding
+  // them is harmless either way, since a Durable Object is only "live" if
+  // something in the request path calls its binding, which nothing here does.
+  "durable_objects": {
+    "bindings": [
+      { "name": "BucketCachePurge", "class_name": "BucketCachePurge" },
+      { "name": "DOQueueHandler", "class_name": "DOQueueHandler" },
+      { "name": "DOShardedTagCache", "class_name": "DOShardedTagCache" }
+    ]
+  },
+
+  // Required the first time a Durable Object class is bound — Cloudflare needs
+  // to know how to provision storage for it. All three of OpenNext's classes
+  // use the SQLite-backed storage API (ctx.storage.sql), which is what
+  // "new_sqlite_classes" is for, as opposed to the older "new_classes".
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["BucketCachePurge", "DOQueueHandler", "DOShardedTagCache"]
+    }
+  ]
 }
