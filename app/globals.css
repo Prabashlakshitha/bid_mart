@@ -7,17 +7,17 @@ html {
 }
 
 body {
-  background-color: #F6F3EC;
+  background-color: #FFFFFF;
   color: #12172B;
 }
 
 ::selection {
-  background-color: #D9A441;
-  color: #12172B;
+  background-color: #FF6A1A;
+  color: #FFFFFF;
 }
 
 .focus-ring:focus-visible {
-  outline: 2px solid #D9A441;
+  outline: 2px solid #FF6A1A;
   outline-offset: 2px;
 }
 

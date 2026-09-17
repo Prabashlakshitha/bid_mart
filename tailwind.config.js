@@ -14,11 +14,14 @@ module.exports = {
           700: "#1C2340",
           600: "#2A3357",
         },
-        paper: "#F6F3EC",
+        paper: "#FFFFFF",
+        // Kept the "gold" key so every existing bg-gold/text-gold-dark class
+        // across the app stays correct — only the hex values moved from the
+        // old amber accent to a true orange.
         gold: {
-          DEFAULT: "#D9A441",
-          light: "#F0CB7E",
-          dark: "#A9782B",
+          DEFAULT: "#FF6A1A",
+          light: "#FFB37A",
+          dark: "#C2410C",
         },
         slate: {
           DEFAULT: "#5B6178",
@@ -60,6 +63,31 @@ module.exports = {
       },
       boxShadow: {
         card: "0 1px 2px rgba(18,23,43,0.06), 0 8px 24px rgba(18,23,43,0.06)",
+
+        // A tight, saturated ring right at the edge plus a much larger soft
+        // spread underneath — the combination is what actually reads as
+        // "glowing" against a white page. A single soft shadow alone just
+        // looks like an ordinary drop shadow once it fades into white.
+        glow: "0 0 0 1px rgba(255,106,26,0.35), 0 0 16px rgba(255,106,26,0.65), 0 10px 30px -4px rgba(255,106,26,0.55)",
+        "glow-lg": "0 0 0 1px rgba(255,106,26,0.5), 0 0 28px rgba(255,106,26,0.85), 0 16px 44px -4px rgba(255,106,26,0.7)",
+
+        // Layered, offset shadows read as depth/elevation rather than a flat
+        // drop shadow — that's the "3D" a card gets at rest vs. on hover.
+        "card-3d": "0 1px 2px rgba(18,23,43,0.05), 0 8px 16px -4px rgba(18,23,43,0.10), 0 24px 48px -16px rgba(18,23,43,0.18)",
+        "card-3d-hover": "0 2px 4px rgba(18,23,43,0.06), 0 4px 18px -2px rgba(255,106,26,0.25), 0 32px 64px -20px rgba(18,23,43,0.28)",
+      },
+      keyframes: {
+        glowPulse: {
+          "0%, 100%": {
+            boxShadow: "0 0 0 1px rgba(255,106,26,0.35), 0 0 16px rgba(255,106,26,0.65), 0 10px 30px -4px rgba(255,106,26,0.55)",
+          },
+          "50%": {
+            boxShadow: "0 0 0 1px rgba(255,106,26,0.55), 0 0 30px rgba(255,106,26,0.9), 0 14px 40px -4px rgba(255,106,26,0.7)",
+          },
+        },
+      },
+      animation: {
+        "glow-pulse": "glowPulse 2.4s ease-in-out infinite",
       },
     },
   },
