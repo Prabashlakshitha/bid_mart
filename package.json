@@ -10,7 +10,7 @@
     "check:supabase": "node scripts/check-supabase.js",
     "migrate": "node scripts/migrate-to-supabase.js",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
-    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy"
+    "deploy": "opennextjs-cloudflare build && wrangler deploy"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",

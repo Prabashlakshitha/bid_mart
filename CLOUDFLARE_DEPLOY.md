@@ -17,7 +17,20 @@ knowing about before it happens to you again.
    directly. `npm run build` only produces `.next/`; the Worker needs
    `.open-next/worker.js`, which only exists after running
    `opennextjs-cloudflare build` first. `npm run deploy` runs both steps.
-3. **Environment variables — one screen, but two different lifetimes.**
+3. **Never put `opennextjs-cloudflare build` inside the `build` script.** It's
+   tempting — it'd guarantee `.open-next` is always fresh — but
+   `opennextjs-cloudflare build` *itself* shells out to `npm run build`
+   internally (that's how it produces the underlying Next.js build it then
+   converts). If `build` also calls `opennextjs-cloudflare build`, that
+   becomes infinite self-recursion: `build` → `opennextjs-cloudflare build` →
+   `npm run build` → `opennextjs-cloudflare build` → … It crashes a few levels
+   deep with `Error: Command failed: npm run build` from inside
+   `@opennextjs/aws/dist/build/buildNextApp.js`. This is easy to miss locally:
+   `npm run build | tail` reports `tail`'s exit code, not the failing
+   command's, so a broken build can look like it passed — redirect to a file
+   and check `$?` directly instead. `build` must stay plain `next build`; the
+   OpenNext step belongs only in `deploy`/`preview`.
+4. **Environment variables — one screen, but two different lifetimes.**
    Cloudflare Workers Builds exposes whatever you set in
    **Settings → Variables and Secrets** to both the build step and the
    running Worker, but that only takes effect on the *next* build. Adding a
@@ -37,7 +50,7 @@ knowing about before it happens to you again.
    the literal string `"undefined"` in their place — every page that touches
    Supabase (which is almost every page) then fails on every single request,
    since the client library can't do anything with `undefined` as a URL.
-4. **After changing variables, trigger a new build.** Push any commit to the
+5. **After changing variables, trigger a new build.** Push any commit to the
    connected branch, or use the dashboard's redeploy/retry action if one is
    available. Check **Deployments** afterward for a new entry, and confirm
    the *live* one is the one you expect — comparing `scriptVersion.id` in the
