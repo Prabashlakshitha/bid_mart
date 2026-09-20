@@ -13,7 +13,6 @@
     "deploy": "opennextjs-cloudflare build && wrangler deploy"
   },
   "dependencies": {
-    "@supabase/auth-helpers-nextjs": "^0.15.0",
     "@supabase/ssr": "^0.12.7",
     "@supabase/supabase-js": "^2.116.0",
     "bcryptjs": "2.4.3",
