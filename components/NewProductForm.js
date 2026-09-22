@@ -4,21 +4,20 @@ import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import MediaUploadField from "./MediaUploadField";
 
-export default function NewProductForm({ storageEnabled = false }) {
+export default function NewProductForm() {
   const router = useRouter();
-  // Upload a file when Supabase Storage is set up, otherwise fall back to
-  // pasting a link so the form still works on a fresh clone.
-  const [imageMode, setImageMode] = useState(storageEnabled ? "upload" : "url");
+
   const [form, setForm] = useState({
     title: "",
     description: "",
-    image_url: "",
+    image_url: "", // Upload කරන ලද පින්තූරයේ Supabase URL එක මෙහි ගබඩා වේ
     video_url: "",
     cost_price: "",
     margin_percent: "20",
     bid_increment: "",
     duration_hours: "48",
   });
+
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -58,7 +57,9 @@ export default function NewProductForm({ storageEnabled = false }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl">
       <div>
-        <label className="text-xs uppercase tracking-wide text-slate">Title</label>
+        <label className="text-xs uppercase tracking-wide text-slate">
+          Title
+        </label>
         <input
           required
           value={form.title}
@@ -69,7 +70,9 @@ export default function NewProductForm({ storageEnabled = false }) {
       </div>
 
       <div>
-        <label className="text-xs uppercase tracking-wide text-slate">Description</label>
+        <label className="text-xs uppercase tracking-wide text-slate">
+          Description
+        </label>
         <textarea
           value={form.description}
           onChange={update("description")}
@@ -78,43 +81,17 @@ export default function NewProductForm({ storageEnabled = false }) {
         />
       </div>
 
+      {/* කෙලින්ම Device එකෙන් Upload කිරීමට MediaUploadField පමණක් භාවිතා කිරීම */}
       <div>
-        {imageMode === "upload" ? (
-          <MediaUploadField
-            kind="lot"
-            label="Product photo"
-            value={form.image_url}
-            onChange={(url) => setForm((f) => ({ ...f, image_url: url }))}
-          />
-        ) : (
-          <>
-            <label className="text-xs uppercase tracking-wide text-slate">Image URL</label>
-            <input
-              value={form.image_url}
-              onChange={update("image_url")}
-              className="w-full mt-1 px-4 py-3 border border-ink-800/15 rounded-card focus-ring"
-              placeholder="https://…"
-            />
-            {!storageEnabled && (
-              <p className="text-xs text-slate mt-1.5">
-                File uploads need Supabase Storage configured — see the README. Paste a link for now.
-              </p>
-            )}
-          </>
-        )}
-
-        {storageEnabled && (
-          <button
-            type="button"
-            onClick={() => setImageMode((m) => (m === "upload" ? "url" : "upload"))}
-            className="text-xs text-slate underline hover:text-gold-dark transition-colors mt-2 focus-ring rounded"
-          >
-            {imageMode === "upload" ? "or paste an image URL instead" : "or upload a file instead"}
-          </button>
-        )}
+        <MediaUploadField
+          kind="lot"
+          label="Product photo"
+          value={form.image_url}
+          onChange={(url) => setForm((f) => ({ ...f, image_url: url }))}
+        />
       </div>
 
-      {storageEnabled && (
+      <div>
         <MediaUploadField
           kind="lot_video"
           media="video"
@@ -123,11 +100,13 @@ export default function NewProductForm({ storageEnabled = false }) {
           value={form.video_url}
           onChange={(url) => setForm((f) => ({ ...f, video_url: url }))}
         />
-      )}
+      </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="text-xs uppercase tracking-wide text-slate">Cost price (Rs.)</label>
+          <label className="text-xs uppercase tracking-wide text-slate">
+            Cost price (Rs.)
+          </label>
           <input
             required
             type="number"
@@ -139,7 +118,9 @@ export default function NewProductForm({ storageEnabled = false }) {
           />
         </div>
         <div>
-          <label className="text-xs uppercase tracking-wide text-slate">Profit margin (%)</label>
+          <label className="text-xs uppercase tracking-wide text-slate">
+            Profit margin (%)
+          </label>
           <input
             required
             type="number"
@@ -161,7 +142,9 @@ export default function NewProductForm({ storageEnabled = false }) {
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="text-xs uppercase tracking-wide text-slate">Bid increment (Rs., optional)</label>
+          <label className="text-xs uppercase tracking-wide text-slate">
+            Bid increment (Rs., optional)
+          </label>
           <input
             type="number"
             min="0"
@@ -173,7 +156,9 @@ export default function NewProductForm({ storageEnabled = false }) {
           />
         </div>
         <div>
-          <label className="text-xs uppercase tracking-wide text-slate">Auction duration (hours)</label>
+          <label className="text-xs uppercase tracking-wide text-slate">
+            Auction duration (hours)
+          </label>
           <input
             required
             type="number"
