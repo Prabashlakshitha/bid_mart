@@ -39,5 +39,7 @@
   "vars": {
     "SUPABASE_STORAGE_BUCKET": "bidmart-images",
     "NEXT_PUBLIC_SUPABASE_URL": "https://your-supabase-project-id.supabase.co",
+    "SUPABASE_SERVICE_ROLE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJham9wb3N0bGhjanN3ZGp1bXZkIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4ODc0ODY4MiwiZXhwIjoyMTA0MzI0NjgyfQ.G4slc3DmPy6A2Y8CjmwFcyzPSlurw_CMAjpjV4X37Gg",
+    "SUPABASE_SERVICE_ROLE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJham9wb3N0bGhjanN3ZGp1bXZkIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4ODc0ODY4MiwiZXhwIjoyMTA0MzI0NjgyfQ.G4slc3DmPy6A2Y8CjmwFcyzPSlurw_CMAjpjV4X37Gg",
   },
 }
